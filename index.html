@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>      الجامعة القاهرة     </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B2545;
+    --navy-deep:#071a33;
+    --gold:#99843f;
+    --gold-light:#E4C563;
+    --cream:#F6F5F1;
+    --ink:#1B2430;
+    --muted:#6b7280;
+    --white:#ffffff;
+    --radius:10px;
+    --shadow:0 10px 30px rgba(11,37,69,0.12);
+    --ok:#1c7a4a;
+    --err:#b3261e;
+    --pending:#8a6d1d;
+    --pending-bg:#fff4da;
+    --archive:#7c3aed;
+    --archive-bg:#f3e8ff;
+    --blocked:#dc2626;
+    --blocked-bg:#fef2f2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Cairo', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{ font-family:'Amiri', serif; font-weight:700; }
+  a{ text-decoration:none; color:inherit; }
+  img{ max-width:100%; display:block; }
+  ul{ list-style:none; }
+
+  .topbar{ background:var(--navy-deep); color:#cfd8e6; font-size:.82rem; padding:6px 0; }
+  .topbar .wrap{ max-width:1200px; margin:0 auto; padding:0 24px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar a{ opacity:.85; transition:opacity .2s; }
+  .topbar a:hover{ opacity:1; color:var(--gold-light); }
+  .topbar .links{ display:flex; gap:18px; }
+
+  header.main{ background:var(--white); box-shadow:0 2px 12px rgba(0,0,0,0.06); position:sticky; top:0; z-index:100; }
+  .nav-wrap{ max-width:1200px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand .crest{
+    width:54px; height:54px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold) 60%, #9c7c14);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--navy-deep); font-family:'Amiri',serif; font-weight:700; font-size:1.3rem;
+    box-shadow:0 4px 14px rgba(201,162,39,0.4);
+    animation:crestPulse 4s ease-in-out infinite;
+  }
+  @keyframes crestPulse{
+    0%,100%{ box-shadow:0 4px 14px rgba(201,162,39,0.4); }
+    50%{ box-shadow:0 4px 24px rgba(201,162,39,0.7); }
+  }
+  .brand .titles h1{ font-size:1.15rem; color:var(--navy); }
+  .brand .titles span{ font-size:.78rem; color:var(--muted); font-family:'Cairo',sans-serif; }
+  nav.links{ display:flex; gap:24px; }
+  nav.links a{ font-weight:600; color:var(--navy); position:relative; padding:6px 0; font-size:.95rem; cursor:pointer; }
+  nav.links a::after{
+    content:''; position:absolute; right:0; bottom:0; height:2px; width:0;
+    background:var(--gold); transition:width .3s ease;
+  }
+  nav.links a:hover::after{ width:100%; }
+  .burger{ display:none; flex-direction:column; gap:5px; cursor:pointer; }
+  .burger span{ width:26px; height:3px; background:var(--navy); border-radius:2px; }
+
+  .hero{ position:relative; height:min(88vh,620px); overflow:hidden; background:var(--navy); }
+  .slide{ position:absolute; inset:0; opacity:0; transition:opacity 1.2s ease; display:flex; align-items:flex-end; }
+  .slide.active{ opacity:1; z-index:2; }
+  .slide img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.08); transition:transform 8s ease; }
+  .slide.active img{ transform:scale(1); }
+  .slide::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(7,26,51,0.92) 0%, rgba(7,26,51,0.35) 55%, rgba(7,26,51,0.15) 100%);
+  }
+  .slide-content{ position:relative; z-index:3; color:var(--white); max-width:1200px; margin:0 auto; padding:0 24px 64px; width:100%; animation:riseIn .9s ease; }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:translateY(0); } }
+  .slide-content .eyebrow{ color:var(--gold-light); font-weight:700; letter-spacing:.5px; font-size:.85rem; margin-bottom:10px; display:block; }
+  .slide-content h2{ font-size:clamp(1.5rem,3.4vw,2.6rem); max-width:820px; margin-bottom:14px; }
+  .slide-content p{ max-width:640px; color:#dbe3ee; font-size:.98rem; }
+  .hero-dots{ position:absolute; z-index:4; bottom:22px; left:50%; transform:translateX(-50%); display:flex; gap:10px; }
+  .hero-dots button{ width:10px; height:10px; border-radius:50%; border:2px solid var(--white); background:transparent; cursor:pointer; padding:0; transition:all .3s; }
+  .hero-dots button.active{ background:var(--gold); border-color:var(--gold); width:26px; border-radius:6px; }
+  .hero-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:4;
+    background:rgba(255,255,255,0.15); color:#fff; border:none; width:44px; height:44px;
+    border-radius:50%; cursor:pointer; font-size:1.2rem; backdrop-filter:blur(4px); transition:background .25s;
+  }
+  .hero-arrow:hover{ background:rgba(255,255,255,0.32); }
+  .hero-arrow.prev{ right:20px; }
+  .hero-arrow.next{ left:20px; }
+
+  .stats{
+    background:var(--white); margin-top:-46px; position:relative; z-index:5;
+    max-width:1100px; margin-inline:auto; border-radius:var(--radius); box-shadow:var(--shadow);
+    display:grid; grid-template-columns:repeat(4,1fr);
+  }
+  .stat{ text-align:center; padding:28px 12px; border-left:1px solid #eee; }
+  .stat:first-child{ border-left:none; }
+  .stat .num{ font-family:'Amiri',serif; font-size:2.1rem; color:var(--navy); font-weight:700; display:block; }
+  .stat .num::after{ content:'+'; color:var(--gold); }
+  .stat .label{ color:var(--muted); font-size:.85rem; margin-top:4px; }
+
+  section{ padding:70px 24px; }
+  .section-inner{ max-width:1200px; margin:0 auto; }
+  .section-head{ text-align:center; margin-bottom:44px; }
+  .section-head .kicker{ color:var(--gold); font-weight:700; font-size:.85rem; letter-spacing:1px; }
+  .section-head h3{ font-size:2rem; color:var(--navy); margin-top:6px; }
+  .section-head .rule{ width:70px; height:3px; background:var(--gold); margin:16px auto 0; border-radius:2px; }
+
+  .news-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; }
+  .news-card{
+    background:var(--white); border-radius:var(--radius); overflow:hidden;
+    box-shadow:0 6px 18px rgba(11,37,69,0.08); transition:transform .35s ease, box-shadow .35s ease;
+    opacity:0; transform:translateY(30px);
+  }
+  .news-card.in-view{ opacity:1; transform:translateY(0); }
+  .news-card:hover{ transform:translateY(-8px); box-shadow:0 16px 30px rgba(11,37,69,0.18); }
+  .news-card .thumb{ height:190px; overflow:hidden; background:var(--navy); }
+  .news-card .thumb img{ width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+  .news-card:hover .thumb img{ transform:scale(1.08); }
+  .news-card .body{ padding:20px; }
+  .news-card .date{ color:var(--gold); font-size:.78rem; font-weight:700; }
+  .news-card h4{ font-size:1.08rem; margin:8px 0 10px; color:var(--navy); line-height:1.5; }
+  .news-card p{ color:var(--muted); font-size:.88rem; }
+  .news-card .more{ display:inline-block; margin-top:12px; color:var(--navy); font-weight:700; font-size:.85rem; border-bottom:1px solid var(--gold); }
+
+  .alumni-wrap{ position:relative; }
+  .alumni-track{ display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:12px; }
+  .alumni-track::-webkit-scrollbar{ height:6px; }
+  .alumni-track::-webkit-scrollbar-thumb{ background:var(--gold); border-radius:4px; }
+  .alumni-card{
+    scroll-snap-align:start; flex:0 0 300px;
+    background:linear-gradient(160deg, var(--navy), var(--navy-deep));
+    color:#fff; border-radius:var(--radius); padding:26px; position:relative; overflow:hidden;
+  }
+  .alumni-card::before{
+    content:'"'; position:absolute; top:-20px; right:10px; font-size:8rem; color:rgba(201,162,39,0.15); font-family:'Amiri',serif;
+  }
+  .alumni-card .avatar{
+    width:58px; height:58px; border-radius:50%; background:var(--gold);
+    display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--navy-deep);
+    font-family:'Amiri',serif; font-size:1.3rem; margin-bottom:14px;
+  }
+  .alumni-card h4{ color:var(--gold-light); font-size:1.05rem; }
+  .alumni-card .role{ font-size:.78rem; color:#a9b7cc; margin-bottom:10px; }
+  .alumni-card p{ font-size:.85rem; color:#d7deea; position:relative; z-index:1; }
+
+  .video-section{ background:var(--navy); color:#fff; }
+  .video-section .section-head h3{ color:#fff; }
+  .video-wrap{
+    max-width:900px; margin:0 auto; border-radius:var(--radius); overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4); position:relative; aspect-ratio:16/9; background:#000;
+  }
+  .video-wrap img{ width:100%; height:100%; object-fit:cover; opacity:.6; }
+  .play-btn{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:78px; height:78px; border-radius:50%; background:var(--gold);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    box-shadow:0 0 0 0 rgba(201,162,39,0.6); animation:playPulse 2.2s infinite;
+  }
+  @keyframes playPulse{
+    0%{ box-shadow:0 0 0 0 rgba(201,162,39,0.55); }
+    70%{ box-shadow:0 0 0 22px rgba(201,162,39,0); }
+    100%{ box-shadow:0 0 0 0 rgba(201,162,39,0); }
+  }
+  .play-btn::after{
+    content:''; border-style:solid; border-width:12px 0 12px 20px;
+    border-color:transparent transparent transparent var(--navy-deep); margin-right:-4px;
+  }
+
+  .verify-section{ background:var(--cream); }
+  .verify-box{
+    max-width:720px; margin:0 auto; background:var(--white);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:36px; position:relative; overflow:hidden;
+  }
+  .verify-box::before{
+    content:''; position:absolute; inset-inline-start:0; top:0; bottom:0; width:5px;
+    background:linear-gradient(180deg, var(--gold), var(--navy));
+  }
+  .verify-form .field{ margin-bottom:18px; }
+  .verify-form label{ display:block; font-weight:700; color:var(--navy); font-size:.9rem; margin-bottom:8px; }
+  .verify-form input{
+    width:100%; padding:13px 16px; border:1.5px solid #dfe3ea; border-radius:8px;
+    font-family:'Cairo',sans-serif; font-size:.95rem; background:var(--cream);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .verify-form input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,39,0.18); background:var(--white); }
+  .verify-hint{ font-size:.78rem; color:var(--muted); margin-top:-8px; margin-bottom:18px; }
+  .verify-btn{
+    width:100%; padding:14px; border:none; border-radius:8px; cursor:pointer;
+    background:var(--navy); color:#fff; font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem;
+    transition:background .25s, transform .15s; display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .verify-btn:hover{ background:var(--navy-deep); }
+  .verify-btn:active{ transform:scale(.98); }
+  .verify-btn:disabled{ opacity:.7; cursor:not-allowed; }
+  .spinner{
+    width:16px; height:16px; border-radius:50%; border:2.5px solid rgba(255,255,255,0.35);
+    border-top-color:#fff; animation:spin .7s linear infinite; display:none;
+  }
+  .verify-btn.loading .spinner{ display:inline-block; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .verify-msg{ margin-top:16px; font-size:.88rem; font-weight:600; text-align:center; min-height:1.2em; }
+  .verify-msg.err{ color:var(--err); }
+
+  #certPage{ min-height:100vh; display:flex; flex-direction:column; }
+  .page-hero{
+    background:linear-gradient(160deg, var(--navy), var(--navy-deep)); color:#fff;
+    padding:46px 24px 60px; text-align:center;
+  }
+  .page-hero .kicker{ color:var(--gold-light); font-weight:700; font-size:.85rem; letter-spacing:1px; }
+  .page-hero h2{ font-size:clamp(1.6rem,3vw,2.2rem); margin-top:8px; }
+  .page-hero .crumb{ margin-top:12px; font-size:.85rem; color:#a9b7cc; }
+  .page-hero .crumb a{ color:var(--gold-light); cursor:pointer; }
+  #certPage main{ flex:1; padding:0 24px 70px; margin-top:-40px; }
+  .cert-card{
+    max-width:720px; margin:0 auto; background:var(--white);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:36px; position:relative; overflow:hidden;
+  }
+  .cert-card::before{
+    content:''; position:absolute; inset-inline-start:0; top:0; bottom:0; width:5px;
+    background:linear-gradient(180deg, var(--gold), var(--navy));
+  }
+  .cert-header{ display:flex; align-items:center; gap:18px; padding-bottom:20px; margin-bottom:20px; border-bottom:2px solid var(--cream); }
+  .cert-photo{ width:88px; height:88px; border-radius:50%; object-fit:cover; border:3px solid var(--gold); flex-shrink:0; background:var(--cream); }
+  .cert-header h4{ color:var(--navy); font-size:1.2rem; }
+  .cert-sub{ color:var(--muted); font-size:.86rem; }
+  .cert-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-top:6px;
+    background:rgba(28,122,74,0.1); color:var(--ok); font-size:.76rem; font-weight:700; padding:3px 10px; border-radius:20px;
+  }
+  .cert-badge.blocked{
+    background:rgba(220,38,38,0.1); color:var(--blocked);
+  }
+  .cert-badge.archive{
+    background:rgba(124,58,237,0.1); color:var(--archive);
+  }
+  .cert-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin-bottom:22px; }
+  .cert-item{ border-bottom:1px dashed #e4e4e4; padding-bottom:8px; }
+  .cert-item .k{ display:block; font-size:.76rem; color:var(--muted); margin-bottom:3px; }
+  .cert-item .v{ font-weight:700; color:var(--ink); font-size:.94rem; }
+  .cert-signatures{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; text-align:center;
+    background:var(--cream); border-radius:8px; padding:18px 10px; margin-bottom:22px;
+  }
+  .cert-signatures div{ font-size:.78rem; }
+  .cert-signatures .sig-line{ border-top:1.5px solid var(--navy); width:70%; margin:0 auto 8px; padding-top:8px; font-weight:700; color:var(--navy); }
+  .cert-signatures .sig-role{ color:var(--muted); }
+  .cert-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+  .cert-actions button{
+    flex:1; min-width:200px; padding:13px; border-radius:8px; cursor:pointer;
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:.92rem;
+    transition:background .2s, color .2s, opacity .2s; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-outline{ background:transparent; border:1.5px solid var(--navy); color:var(--navy); }
+  .btn-outline:hover{ background:var(--navy); color:#fff; }
+  .btn-pdf{ background:var(--gold); border:1.5px solid var(--gold); color:var(--navy-deep); }
+  .btn-pdf:hover{ background:#f8f7f3; }
+  .btn-pdf:disabled{ opacity:.65; cursor:not-allowed; }
+  .pending-box{
+    margin-top:18px; background:var(--pending-bg); border:1.5px dashed var(--gold);
+    border-radius:8px; padding:22px; text-align:center; animation:riseIn .4s ease;
+  }
+  .pending-badge{
+    display:inline-flex; align-items:center; gap:8px; background:#fff; color:var(--pending);
+    font-weight:700; padding:6px 16px; border-radius:20px; font-size:.85rem; margin-bottom:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  }
+  .pending-badge .dot{ width:8px; height:8px; border-radius:50%; background:var(--pending); animation:pulseDot 1.4s ease-in-out infinite; }
+  @keyframes pulseDot{ 0%,100%{ opacity:1;} 50%{ opacity:.3;} }
+  .pending-box p{ color:var(--muted); font-size:.86rem; max-width:440px; margin:0 auto; }
+  .pending-box .ref{ margin-top:10px; font-size:.78rem; color:var(--navy); font-weight:700; }
+
+  .blocked-box{
+    margin-top:18px; background:var(--blocked-bg); border:2px solid var(--blocked);
+    border-radius:12px; padding:32px; text-align:center; animation:riseIn .4s ease;
+  }
+  .blocked-icon{
+    width:64px; height:64px; border-radius:50%; background:var(--blocked); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 16px;
+  }
+  .blocked-title{
+    font-family:'Amiri',serif; font-size:1.4rem; color:var(--blocked); margin-bottom:8px;
+  }
+  .blocked-reason{
+    color:var(--muted); font-size:.9rem; margin-bottom:16px; line-height:1.8;
+  }
+  .blocked-details{
+    background:#fff; border-radius:8px; padding:16px; margin-top:16px; text-align:right;
+  }
+  .blocked-details .detail-row{
+    display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #e5e7eb;
+    font-size:.85rem;
+  }
+  .blocked-details .detail-row:last-child{ border-bottom:none; }
+  .blocked-details .detail-label{ color:var(--muted); }
+  .blocked-details .detail-value{ font-weight:700; color:var(--ink); }
+  .blocked-details .detail-value.danger{ color:var(--blocked); }
+  .blocked-details .detail-value.archive{ color:var(--archive); }
+  .archive-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--archive-bg); color:var(--archive); font-size:.75rem; font-weight:700;
+    padding:4px 12px; border-radius:20px; margin-top:12px;
+  }
+
+  footer{ background:var(--navy-deep); color:#b9c4d6; padding:50px 24px 20px; }
+  .footer-grid{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:32px; }
+  footer h5{ color:#fff; font-family:'Amiri',serif; margin-bottom:14px; font-size:1.05rem; }
+  footer li{ margin-bottom:8px; font-size:.88rem; }
+  footer a:hover{ color:var(--gold-light); }
+  .footer-bottom{
+    max-width:1200px; margin:30px auto 0; padding-top:18px; border-top:1px solid rgba(255,255,255,0.08);
+    text-align:center; font-size:.8rem; color:#8496af;
+  }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  @media (max-width:900px){
+    nav.links{ display:none; }
+    .burger{ display:flex; }
+    .stats{ grid-template-columns:repeat(2,1fr); }
+    .stat:nth-child(3){ border-left:none; }
+    .news-grid{ grid-template-columns:1fr; }
+    .footer-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:600px){
+    .verify-box, .cert-card{ padding:24px; }
+    .cert-grid{ grid-template-columns:1fr; }
+    .cert-signatures{ grid-template-columns:1fr; }
+    .cert-actions button{ min-width:100%; }
+    .blocked-details .detail-row{ flex-direction:column; gap:4px; }
+  }
+</style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+
+<!-- ========== الصفحة الرئيسية ========== -->
+<div id="homeView">
+  <div class="topbar">
+    <div class="wrap">
+      <div class="links">
+        <a href="#">دليل الجامعة</a>
+        <a href="#alumni">الخريجون</a>
+        <a href="#contact">تواصل معنا</a>
+      </div>
+      <div class="links">
+        <a href="#">English</a>
+        <a href="#">البريد الإلكتروني</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="main">
+    <div class="nav-wrap">
+      <div class="brand">
+       <img class="crest" src="https://files.catbox.moe/1kfvpo.jpeg" alt="شعار الجامعة">        <div class="titles">
+          <h1>بوابة الجامعة القاهرة       </h1>
+          <span> https://cu.edu.eg/</span>
+        </div>
+      </div>
+      <nav class="links">
+        <a href="#home">الرئيسية</a>
+        <a href="#news">الأخبار</a>
+        <a href="#stats">أرقام وحقائق</a>
+        <a href="#alumni">خريجون بارزون</a>
+        <a href="#verify">التحقق من الشهادة</a>
+        <a href="#video">فيديو</a>
+        <a href="#contact">تواصل</a>
+      </nav>
+      <div class="burger"><span></span><span></span><span></span></div>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="slide active">
+      <img src="https://images.unsplash.com/photo-1562774053-701939374585?w=1600&q=80" alt=" الجامعة القاهرة    ">
+      <div class="slide-content">
+        <span class="eyebrow">آخر الأخبار</span>
+        <h2>الجامعة تطلق برنامج التبادل الأكاديمي الدولي لعام 2026</h2>
+        <p>خطوة استراتيجية جديدة لتعزيز الشراكات الدولية وفتح آفاق أوسع أمام الطلاب والباحثين.</p>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&q=80" alt="احتفال تخرج">
+      <div class="slide-content">
+        <span class="eyebrow">مناسبة بارزة</span>
+        <h2>حفل تخريج الدفعة الجديدة بحضور نخبة من الأكاديميين والشخصيات العامة</h2>
+        <p>احتفلت الجامعة بتخريج آلاف الطلاب في حفل مهيب بقاعة الاحتفالات الكبرى.</p>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&q=80" alt="كلية الهندسة">
+      <div class="slide-content">
+        <span class="eyebrow">إنجاز أكاديمي</span>
+        <h2>الجامعة تحقق قفزة نوعية في التصنيفات العالمية لعام 2026</h2>
+        <p>تقدم ملحوظ في التصنيفات الدولية يعكس جهود التطوير الأكاديمي والبحثي المستمرة.</p>
+      </div>
+    </div>
+    <button class="hero-arrow prev" onclick="changeSlide(-1)">›</button>
+    <button class="hero-arrow next" onclick="changeSlide(1)">‹</button>
+    <div class="hero-dots" id="heroDots"></div>
+  </section>
+
+  <div class="stats reveal" id="stats">
+    <div class="stat"><span class="num" data-target="14518">0</span><div class="label">أعضاء هيئة التدريس</div></div>
+    <div class="stat"><span class="num" data-target="207853">0</span><div class="label">إجمالي الطلاب</div></div>
+    <div class="stat"><span class="num" data-target="6963">0</span><div class="label">طلاب دوليون</div></div>
+    <div class="stat"><span class="num" data-target="11849">0</span><div class="label">باحثون نشطون</div></div>
+  </div>
+
+  <section id="news">
+    <div class="section-inner">
+      <div class="section-head">
+        <span class="kicker">أخبار الجامعة</span>
+        <h3>آخر المستجدات</h3>
+        <div class="rule"></div>
+      </div>
+      <div class="news-grid">
+        <article class="news-card reveal">
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=80" alt="مكتبة"></div>
+          <div class="body">
+            <span class="date">15 يوليو 2026</span>
+            <h4>افتتاح مركز الابتكار وريادة الأعمال الجديد للطلاب</h4>
+            <p>مساحة جديدة لدعم المشاريع الطلابية الناشئة وربطها بسوق العمل.</p>
+            <a href="#" class="more">اقرأ المزيد ←</a>
+          </div>
+        </article>
+        <article class="news-card reveal">
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&q=80" alt="تعاون علمي"></div>
+          <div class="body">
+            <span class="date">10 يوليو 2026</span>
+            <h4>توقيع بروتوكول تعاون علمي مع جامعات أوروبية رائدة</h4>
+            <p>يهدف التعاون إلى تبادل الخبرات البحثية وبرامج الدراسات العليا المشتركة.</p>
+            <a href="#" class="more">اقرأ المزيد ←</a>
+          </div>
+        </article>
+        <article class="news-card reveal">
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80" alt="برمجة"></div>
+          <div class="body">
+            <span class="date">2 يوليو 2026</span>
+            <h4>فريق الجامعة يفوز بالمركز الأول في مسابقة البرمجة الدولية</h4>
+            <p>إنجاز جديد يضاف إلى سجل الجامعة الحافل بالتفوق العلمي والتقني.</p>
+            <a href="#" class="more">اقرأ المزيد ←</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="alumni" style="background:var(--white);">
+    <div class="section-inner">
+      <div class="section-head">
+        <span class="kicker">قصص نجاح</span>
+        <h3>خريجون بارزون</h3>
+        <div class="rule"></div>
+      </div>
+      <div class="alumni-wrap">
+        <div class="alumni-track">
+          <div class="alumni-card reveal">
+            <div class="avatar">أ.ك</div>
+            <h4>د. أحمد كمال</h4>
+            <div class="role">أستاذ الفلسفة وعميد سابق</div>
+            <p>واحد من أبرز الأسماء التي شكلت الفكر الأكاديمي العربي في القرن الماضي، وترك أثرًا واضحًا في مسيرة الجامعة.</p>
+          </div>
+          <div class="alumni-card reveal">
+            <div class="avatar">س.ع</div>
+            <h4>المستشارة سلمى عادل</h4>
+            <div class="role">قاضية ومستشارة قانونية</div>
+            <p>تخرجت من كلية الحقوق وشغلت مناصب قضائية رفيعة، وتُعد نموذجًا يُحتذى للطالبات في الكلية.</p>
+          </div>
+          <div class="alumni-card reveal">
+            <div class="avatar">م.ف</div>
+            <h4>مروان فتحي</h4>
+            <div class="role">روائي وكاتب</div>
+            <p>حصل على درجته الجامعية الأولى قبل أن يتجه لعالم الأدب، وترك بصمة واضحة في المشهد الثقافي.</p>
+          </div>
+          <div class="alumni-card reveal">
+            <div class="avatar"></div>
+            <h4>د. نور حسن</h4>
+            <div class="role">باحثة في الذكاء الاصطناعي</div>
+            <p>من أبرز الباحثات الشابات في مجالها، وتعمل حاليًا على مشاريع بحثية دولية مرموقة.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="verify-section" id="verify">
+    <div class="section-inner">
+      <div class="section-head">
+        <span class="kicker">خدمة إلكترونية</span>
+        <h3>التحقق من صحة الشهادة</h3>
+        <div class="rule"></div>
+      </div>
+      <div class="verify-box reveal">
+        <form class="verify-form" id="verifyForm">
+          <div class="field">
+            <label for="nationalId">الرقم القومي</label>
+            <input type="text" id="nationalId" inputmode="numeric" maxlength="14" placeholder="أدخل الرقم القومي المكوّن من 14 رقمًا" required>
+          </div>
+          <div class="field">
+            <label for="password">كلمة المرور</label>
+            <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+          </div>
+          <p class="verify-hint"></p>
+          <button type="submit" class="verify-btn" id="verifyBtn">
+            <span class="spinner"></span>
+            <span class="btn-label">تحقق من الشهادة</span>
+          </button>
+          <p class="verify-msg" id="verifyMsg"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="video-section" id="video">
+    <div class="section-inner">
+      <div class="section-head">
+        <span class="kicker">شاهد</span>
+        <h3>جولة داخل الحرم الجامعي</h3>
+        <div class="rule"></div>
+      </div>
+      <div class="video-wrap">
+        <img src="https://images.unsplash.com/photo-1562774053-701939374585?w=900&q=80" alt="جامعة  القاهرة">
+        <div class="play-btn"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-grid">
+      <div>
+        <h5>بوابة الجامعة</h5>
+        <p style="font-size:.88rem; max-width:320px;">صرح علمي وأكاديمي رائد، يجمع بين عراقة التاريخ وتطلعات المستقبل، ويخرّج أجيالًا من القادة في شتى المجالات.</p>
+      </div>
+      <div>
+        <h5>روابط سريعة</h5>
+        <ul>
+          <li><a href="#">عن الجامعة</a></li>
+          <li><a href="#">الكليات</a></li>
+          <li><a href="#">القبول والتسجيل</a></li>
+          <li><a href="#">البحث العلمي</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>خدمات الطلاب</h5>
+        <ul>
+          <li><a href="#">البريد الإلكتروني</a></li>
+          <li><a href="#">الجدول الدراسي</a></li>
+          <li><a href="#">المكتبة الرقمية</a></li>
+          <li><a href="#">الدعم الفني</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>تواصل معنا</h5>
+        <ul>
+          <li>     جامعة  القاهرة . جمهورية مصر العربية</li>
+          <li>https://cu.edu.eg</li>
+          <li>+20 2 0000 0000</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 بوابة جامعة  القاهرة    — جميع الحقوق محفوظة.
+    </div>
+  </footer>
+</div>
+
+<!-- ========== صفحة الشهادة ========== -->
+<div id="certPage" hidden>
+  <div class="page-hero">
+    <span class="kicker">نظام التحقق الإلكتروني</span>
+    <h2>نتيجة التحقق من الشهادة</h2>
+    <div class="crumb">
+      <a id="backToHomeCrumb">الرئيسية</a> / نتيجة التحقق
+    </div>
+  </div>
+
+  <header class="main">
+    <div class="nav-wrap">
+      <div class="brand">
+       <img class="crest" src="https://files.catbox.moe/1kfvpo.jpeg" alt="شعار الجامعة">
+        <div class="titles">
+          <h1>بوابة  جامعة  القاهرة         </h1>
+          <span>https://cu.edu.eg</span>
+        </div>
+      </div>
+      <nav class="links">
+        <a id="backToHomeNav">العودة للرئيسية</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="cert-card reveal">
+      <!-- محتوى الشهادة العادية -->
+      <div id="normalCertContent">
+        <div class="cert-header">
+          <img class="cert-photo" id="certPhoto" src="" alt="صورة الطالب">
+          <div>
+            <h4 id="certName"></h4>
+            <span class="cert-sub" id="certCollege"></span><br>
+            <span class="cert-badge">✅ الشهادة معتمدة  </span>
+          </div>
+        </div>
+        <div class="cert-grid" id="certGrid"></div>
+        <div class="cert-signatures" id="certSign"></div>
+        <div class="cert-actions" id="certActions">
+          <button type="button" class="btn-outline" id="verifyAgain">التحقق من شهادة أخرى</button>
+          <button type="button" class="btn-pdf" id="pdfBtn"><span>📄</span> التحقق من الشهادة PDF</button>
+        </div>
+        <div class="pending-box" id="pendingBox" hidden>
+          <div class="pending-badge"><span class="dot"></span> قيد المراجعة</div>
+          <p>طلب استخراج الشهادة بصيغة PDF قيد المراجعة من الإدارة المختصة حاليًا. سيتم إشعارك بمجرد اعتماد الشهادة الرقمية وإتاحتها للتحميل.</p>
+          <div class="ref" id="pendingRef"></div>
+        </div>
+      </div>
+
+      <!-- محتوى الشهادة المحظورة -->
+      <div id="blockedCertContent" hidden>
+        <div class="cert-header">
+          <img class="cert-photo" id="blockedPhoto" src="" alt="صورة الطالب">
+          <div>
+            <h4 id="blockedName"></h4>
+            <span class="cert-sub" id="blockedCollege"></span><br>
+            <span class="cert-badge blocked" id="blockedBadge">🚫 الطالب محظور القيد</span>
+          </div>
+        </div>
+        <div class="blocked-box">
+          <div class="blocked-icon">🚫</div>
+          <div class="blocked-title">الشهادة غير معتمدة</div>
+          <div class="blocked-reason">
+            لا يمكن استخراج الشهادة لأن ملف الطالب <strong>غير معتمد</strong> بسبب عدم سداد المصاريف الدراسية المستحقة.<br>
+            كما تم <strong>حظر قيد الطالب</strong> داخل الجامعة حتى تسوية الوضع المالي.
+          </div>
+          <div class="blocked-details">
+            <div class="detail-row">
+              <span class="detail-label">اسم الطالب:</span>
+              <span class="detail-value" id="blockedDetailName"></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">الرقم القومي:</span>
+              <span class="detail-value" id="blockedDetailId"></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">الكلية:</span>
+              <span class="detail-value" id="blockedDetailCollege"></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">حالة القيد:</span>
+              <span class="detail-value danger">محظور</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">حالة الملف:</span>
+              <span class="detail-value archive">مؤرشف</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">سبب الحظر:</span>
+              <span class="detail-value danger">عدم سداد المصاريف الدراسية</span>
+            </div>
+          </div>
+          <div class="archive-badge">📁 الملف مؤرشف — غير قابل للاستخراج</div>
+        </div>
+        <div class="cert-actions" style="margin-top:22px;">
+          <button type="button" class="btn-outline" id="verifyAgainBlocked">التحقق من شهادة أخرى</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">© 2026 بوابة الجامعة — جميع الحقوق محفوظة.</div>
+  </footer>
+</div>
+
+<script>
+  /* ====== Slider ====== */
+  const slides = document.querySelectorAll('.slide');
+  const dotsWrap = document.getElementById('heroDots');
+  let current = 0, timer;
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    if(i === 0) b.classList.add('active');
+    b.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(b);
+  });
+  const dots = dotsWrap.querySelectorAll('button');
+  function render(){
+    slides.forEach((s,i) => s.classList.toggle('active', i === current));
+    dots.forEach((d,i) => d.classList.toggle('active', i === current));
+  }
+  function goTo(i){ current = i; render(); resetTimer(); }
+  function changeSlide(dir){
+    current = (current + dir + slides.length) % slides.length;
+    render(); resetTimer();
+  }
+  function resetTimer(){
+    clearInterval(timer);
+    timer = setInterval(() => changeSlide(1), 5500);
+  }
+  resetTimer();
+
+  /* ====== Counters ====== */
+  function animateCounters(){
+    document.querySelectorAll('.num').forEach(el => {
+      const target = +el.dataset.target;
+      let cur = 0;
+      const step = Math.max(1, Math.ceil(target / 90));
+      const iv = setInterval(() => {
+        cur += step;
+        if(cur >= target){ cur = target; clearInterval(iv); }
+        el.textContent = cur.toLocaleString('en-US');
+      }, 16);
+    });
+  }
+
+  /* ====== Scroll reveal ====== */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        if(entry.target.id === 'stats') animateCounters();
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  document.querySelectorAll('.reveal, .news-card').forEach(el => io.observe(el));
+
+  /* ====== Video placeholder ====== */
+  document.querySelector('.play-btn').addEventListener('click', () => {
+    alert('ضع رابط الفيديو الخاص بك هنا (YouTube / ملف MP4).');
+  });
+
+  /* ====== Clients Data ====== */
+  const CLIENT_1 = {
+    nationalId: '29911030103264',
+    password: 'shima1999',
+    photo: 'https://files.catbox.moe/bxluc0.jpeg',
+    name: 'شيماء كامل حسين احمد',
+    college: 'كلية التمريض – جامعة القاهرة  ',
+    fields: {
+      'تاريخ الميلاد': ' 03-11-1999',
+      'محل الميلاد': ' القاهرة ',
+      'الرقم القومي': '29911030103364',
+      'الجنسية': 'مصرية',
+      'المؤهل': '         بكالوريوس في التمريض          ',
+      'الكلية': '     كلية التمريض    – جامعة  القاهرة   ',
+      'التخصص والترقية': '   التمريض   ',
+      'نظام الدراسة': ' انتظام     ',
+      'لغة الدراسة': 'اللغة الإنجليزية ',
+      'عدد سنوات الدراسة بالكلية': '4 سنوات',
+      'سنة القيد': ' 2022/2023',
+      'دور التخرج': 'دور مايو',
+      'سنة التخرج': '2026-2027',
+      'المجموع': ' 764/900',
+      'التقدير العام': ' ممتاز  ',
+      'النسبة المئوية': ' 96% '
+    },
+    signatures: [
+      { name: 'أ.د.فاطمة عابد             ', role: 'عميد المعهد' },
+      { name: 'أ.د.زينب محمد السيد           ', role: 'وكيل المعهد لشؤون التعليم والطلاب' },
+      { name: 'أ.د.حنان فهمي   .        ', role: 'وكيل المعهد للدراسات العليا والبحوث' }
+    ]
+  };
+
+  const CLIENT_2 = {
+    nationalId: '12345678912345',
+    password: '1',
+    photo: '30445896-0bcf-4838-b1cd-18b8544f8396.jpg',
+    name: 'علاء خالد محمد قنديل',
+    college: 'كلية التجارة – جامعة القاهرة',
+    blocked: true,
+    archiveStatus: 'مؤرشف',
+    blockReason: 'عدم سداد المصاريف الدراسية',
+    enrollmentStatus: 'محظور',
+    fields: {
+      'تاريخ الميلاد': '07/12/1985',
+      'الرقم القومي': '28512071702517',
+      'الجنسية': 'مصري',
+      'المؤهل': 'بكالوريوس تجارة',
+      'الكلية': 'كلية التجارة – جامعة القاهرة',
+      'التخصص': 'برنامج التعليم المدمج – شعبة المحاسبة',
+      'نظام الدراسة': 'انتظام',
+      'لغة الدراسة': 'العربية',
+      'سنة التخرج': '2025',
+      'التقدير العام': 'جيد جدًا',
+      'المعدل التراكمي': '3.30',
+      'حالة القيد': 'محظور',
+      'حالة الملف': 'مؤرشف'
+    }
+  };
+
+  const ALL_CLIENTS = [CLIENT_1, CLIENT_2];
+
+  /* ====== DOM refs ====== */
+  const homeView   = document.getElementById('homeView');
+  const certPage   = document.getElementById('certPage');
+  const verifyForm = document.getElementById('verifyForm');
+  const verifyBtn  = document.getElementById('verifyBtn');
+  const verifyMsg  = document.getElementById('verifyMsg');
+  const certGrid   = document.getElementById('certGrid');
+  const certSign   = document.getElementById('certSign');
+  const pdfBtn     = document.getElementById('pdfBtn');
+  const pendingBox = document.getElementById('pendingBox');
+  const pendingRef = document.getElementById('pendingRef');
+
+  const normalCertContent  = document.getElementById('normalCertContent');
+  const blockedCertContent = document.getElementById('blockedCertContent');
+
+  function digitsOnly(str){ return str.replace(/[^0-9]/g, ''); }
+
+  /* ====== Verify form ====== */
+  verifyForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    verifyMsg.textContent = '';
+    verifyMsg.className = 'verify-msg';
+
+    const nationalId = digitsOnly(document.getElementById('nationalId').value.trim());
+    const password = document.getElementById('password').value;
+
+    if(nationalId.length !== 14){
+      verifyMsg.textContent = 'الرجاء إدخال رقم قومي صحيح مكوّن من 14 رقمًا.';
+      verifyMsg.classList.add('err');
+      return;
+    }
+    if(!password){
+      verifyMsg.textContent = 'الرجاء إدخال كلمة المرور.';
+      verifyMsg.classList.add('err');
+      return;
+    }
+
+    verifyBtn.disabled = true;
+    verifyBtn.classList.add('loading');
+    verifyBtn.querySelector('.btn-label').textContent = 'جارٍ التحقق...';
+
+    setTimeout(() => {
+      verifyBtn.disabled = false;
+      verifyBtn.classList.remove('loading');
+      verifyBtn.querySelector('.btn-label').textContent = 'تحقق من الشهادة';
+
+      const client = ALL_CLIENTS.find(c => digitsOnly(c.nationalId) === nationalId && c.password === password);
+
+      if(!client){
+        verifyMsg.textContent = 'بيانات الدخول غير صحيحة، أو لا توجد شهادة مرتبطة بهذا الرقم القومي.';
+        verifyMsg.classList.add('err');
+        return;
+      }
+
+      if(client.blocked){
+        renderBlockedCertificate(client);
+      } else {
+        renderCertificate(client);
+      }
+      goToCertPage();
+      verifyForm.reset();
+    }, 900);
+  });
+
+  function renderCertificate(rec){
+    normalCertContent.hidden = false;
+    blockedCertContent.hidden = true;
+
+    document.getElementById('certPhoto').src = rec.photo;
+    document.getElementById('certName').textContent = rec.name;
+    document.getElementById('certCollege').textContent = rec.college;
+
+    certGrid.innerHTML = '';
+    Object.entries(rec.fields).forEach(([k, v]) => {
+      const item = document.createElement('div');
+      item.className = 'cert-item';
+      item.innerHTML = '<span class="k">' + k + '</span><span class="v">' + v + '</span>';
+      certGrid.appendChild(item);
+    });
+
+    certSign.innerHTML = '';
+    rec.signatures.forEach(s => {
+      const div = document.createElement('div');
+      div.innerHTML = '<div class="sig-line">' + s.name + '</div><div class="sig-role">' + s.role + '</div>';
+      certSign.appendChild(div);
+    });
+
+    pendingBox.hidden = true;
+    pdfBtn.disabled = false;
+    pdfBtn.innerHTML = '<span>📄</span> التحقق من الشهادة PDF';
+  }
+
+  function renderBlockedCertificate(rec){
+    normalCertContent.hidden = true;
+    blockedCertContent.hidden = false;
+
+    document.getElementById('blockedPhoto').src = rec.photo;
+    document.getElementById('blockedName').textContent = rec.name;
+    document.getElementById('blockedCollege').textContent = rec.college;
+
+    document.getElementById('blockedDetailName').textContent = rec.name;
+    document.getElementById('blockedDetailId').textContent = rec.nationalId;
+    document.getElementById('blockedDetailCollege').textContent = rec.college;
+  }
+
+  function goToCertPage(){
+    homeView.hidden = true;
+    certPage.hidden = false;
+    window.scrollTo(0, 0);
+  }
+  function goToHome(){
+    certPage.hidden = true;
+    homeView.hidden = false;
+    verifyMsg.textContent = '';
+    verifyMsg.className = 'verify-msg';
+    window.location.hash = '#verify';
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('verifyAgain').addEventListener('click', goToHome);
+  document.getElementById('verifyAgainBlocked').addEventListener('click', goToHome);
+  document.getElementById('backToHomeNav').addEventListener('click', goToHome);
+  document.getElementById('backToHomeCrumb').addEventListener('click', goToHome);
+
+  /* ====== PDF Button ====== */
+  pdfBtn.addEventListener('click', () => {
+    pdfBtn.disabled = true;
+    pdfBtn.innerHTML = '<span>⏳</span> جارٍ الإرسال...';
+
+    setTimeout(() => {
+      pdfBtn.innerHTML = '<span>⏳</span> قيد المراجعة';
+      const ref = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
+      pendingRef.textContent = 'رقم الطلب المرجعي: ' + ref;
+      pendingBox.hidden = false;
+    }, 700);
+  });
+</script>
+
+</body>
+</html>
